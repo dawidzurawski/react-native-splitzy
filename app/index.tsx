@@ -1,68 +1,243 @@
-import React from "react";
-import Animated, {
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
-import RenderItem from "@/components/RenderItem";
-import data, { OnboardingData } from "@/data/data";
-import { FlatList, View, ViewToken } from "react-native";
-import Pagination from "@/components/Pagination";
-import CustomButton from "@/components/CustomButton";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useNavigation } from "@react-navigation/native";
 
-const App = () => {
-  const flatlistRef = useAnimatedRef<FlatList<OnboardingData>>();
-  const x = useSharedValue(0);
-  const flatlistIndex = useSharedValue(0);
+const splitzyLogo = require("../assets/splitzy-logo.png");
 
-  const onViewableItemsChanged = ({
-    viewableItems,
-  }: {
-    viewableItems: ViewToken[];
-  }) => {
-    if (viewableItems[0].index !== null) {
-      flatlistIndex.value = viewableItems[0].index;
-    }
+const Index = () => {
+  const [groupEvent, setGroupEvent] = useState("");
+  const [groupSize, setGroupSize] = useState("");
+  const [savingsGoal, setSavingsGoal] = useState("");
+  const [goalDate, setGoalDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const navigation = useNavigation();
+
+  const onChangeDate = (event: any, selectedDate: Date | undefined) => {
+    const currentDate = selectedDate || goalDate;
+    setShowDatePicker(false);
+    setGoalDate(currentDate);
   };
 
-  const onScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      x.value = event.contentOffset.x;
-    },
-  });
+  const handleSubmit = () => {
+    const eventData = {
+      groupEvent, // The event name
+      groupSize, // The number of people
+      savingsGoal, // The savings goal
+      goalDate, // The target date
+    };
+
+    // Navigate to Home and pass eventData as params
+    navigation.navigate("home", { eventData });
+  };
 
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Animated.FlatList
-        ref={flatlistRef}
-        onScroll={onScroll}
-        data={data}
-        renderItem={({ item, index }) => {
-          return <RenderItem item={item} index={index} x={x} />;
-        }}
-        keyExtractor={(item) => item.id}
-        scrollEventThrottle={16}
-        horizontal={true}
-        bounces={false}
-        pagingEnabled={true}
-        showsHorizontalScrollIndicator={false}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{
-          minimumViewTime: 300,
-          viewAreaCoveragePercentThreshold: 10,
-        }}
-      />
-      <View className="absolute bottom-5 left-0 right-0 mx-8 py-X flex-row justify-between items-center">
-        <Pagination data={data} x={x} />
-        <CustomButton
-          flatlistRef={flatlistRef}
-          flatlistIndex={flatlistIndex}
-          dataLength={data.length}
-          x={x}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f6fa" }}>
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+        <Image
+          source={splitzyLogo}
+          style={{
+            width: 120,
+            height: 40,
+            alignSelf: "center",
+            marginVertical: 20,
+          }}
         />
-      </View>
-    </View>
+
+        <View style={{ marginBottom: 40 }}>
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: "bold",
+              color: "#333",
+              textAlign: "center",
+            }}
+          >
+            Group Savings
+          </Text>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "#fff",
+            padding: 20,
+            borderRadius: 20,
+            marginBottom: 30,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: "#333",
+              marginBottom: 10,
+            }}
+          >
+            What is your group event?
+          </Text>
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: "#e0e0e0",
+              padding: 15,
+              borderRadius: 10,
+              marginBottom: 20,
+            }}
+            placeholder="Enter event name"
+            value={groupEvent}
+            onChangeText={(text) => setGroupEvent(text)}
+          />
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "#fff",
+            padding: 20,
+            borderRadius: 20,
+            marginBottom: 30,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: "#333",
+              marginBottom: 10,
+            }}
+          >
+            How many people are in your group?
+          </Text>
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: "#e0e0e0",
+              padding: 15,
+              borderRadius: 10,
+              marginBottom: 20,
+            }}
+            placeholder="Enter group size"
+            keyboardType="numeric"
+            value={groupSize}
+            onChangeText={(text) => setGroupSize(text)}
+          />
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "#fff",
+            padding: 20,
+            borderRadius: 20,
+            marginBottom: 30,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: "#333",
+              marginBottom: 10,
+            }}
+          >
+            What is your group savings goal?
+          </Text>
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: "#e0e0e0",
+              padding: 15,
+              borderRadius: 10,
+              marginBottom: 20,
+            }}
+            placeholder="Enter savings goal"
+            keyboardType="numeric"
+            value={savingsGoal}
+            onChangeText={(text) => setSavingsGoal(text)}
+          />
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "#fff",
+            padding: 20,
+            borderRadius: 20,
+            marginBottom: 30,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: "#333",
+              marginBottom: 10,
+            }}
+          >
+            When do you want to reach this goal by?
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowDatePicker(true)}
+            style={{
+              paddingVertical: 15,
+              backgroundColor: "#e0e0e0",
+              borderRadius: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 16, color: "#555" }}>
+              {goalDate.toDateString()}
+            </Text>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={goalDate}
+              mode="date"
+              display="default"
+              onChange={onChangeDate}
+            />
+          )}
+        </View>
+
+        <TouchableOpacity
+          onPress={handleSubmit} // Call handleSubmit on press
+          style={{
+            backgroundColor: "#22C55E",
+            paddingVertical: 15,
+            borderRadius: 30,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 18, color: "#fff", fontWeight: "bold" }}>
+            Submit
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-export default App;
+export default Index;
