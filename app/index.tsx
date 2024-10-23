@@ -30,18 +30,17 @@ const Index = () => {
 
   const handleSubmit = () => {
     const eventData = {
-      groupEvent, // The event name
-      groupSize, // The number of people
-      savingsGoal, // The savings goal
-      goalDate, // The target date
+      groupEvent,
+      groupSize,
+      savingsGoal,
+      goalDate,
     };
 
-    // Navigate to Home and pass eventData as params
     navigation.navigate("home", { eventData });
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f6fa" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#44bca3" }}>
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <Image
           source={splitzyLogo}
@@ -52,19 +51,6 @@ const Index = () => {
             marginVertical: 20,
           }}
         />
-
-        <View style={{ marginBottom: 40 }}>
-          <Text
-            style={{
-              fontSize: 32,
-              fontWeight: "bold",
-              color: "#333",
-              textAlign: "center",
-            }}
-          >
-            Group Savings
-          </Text>
-        </View>
 
         <View
           style={{
@@ -223,9 +209,9 @@ const Index = () => {
         </View>
 
         <TouchableOpacity
-          onPress={handleSubmit} // Call handleSubmit on press
+          onPress={handleSubmit}
           style={{
-            backgroundColor: "#22C55E",
+            backgroundColor: "#906ef7",
             paddingVertical: 15,
             borderRadius: 30,
             alignItems: "center",

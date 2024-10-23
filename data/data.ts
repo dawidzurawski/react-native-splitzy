@@ -21,8 +21,8 @@ const data: OnboardingData[] = [
     description: "Reach your goal by March 1st 2024.",
     text: "£3726",
     amountDescription: "Total event balance:",
-    textColor: "#333", // matching the darker text from the image
-    backgroundColor: "#E8F5E9", // soft pastel green
+    textColor: "#333",
+    backgroundColor: "#E8F5E9",
   },
   {
     id: 2,
@@ -33,7 +33,7 @@ const data: OnboardingData[] = [
     text: "£620",
     amountDescription: "Your contribution:",
     textColor: "#333",
-    backgroundColor: "#F1F8E9", // another soft pastel color
+    backgroundColor: "#F1F8E9",
   },
 ];
 

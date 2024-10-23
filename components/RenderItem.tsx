@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Card from "./Card";
 import CustomButton from "./CustomButton";
+import * as Progress from "react-native-progress";
 
 type Props = {
   item: OnboardingData;
@@ -26,12 +27,9 @@ type Props = {
 
 const RenderItem = ({ item, index, x, eventData }: Props) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-
   const [totalBalance, setTotalBalance] = useState(0);
   const [goalReached, setGoalReached] = useState(false);
-
-  // State for keeping track of user contributions
-  const [contributions, setContributions] = useState(moneyData); // Initialize with existing contributors
+  const [contributions, setContributions] = useState(moneyData);
 
   const groupGoal = parseFloat(eventData?.savingsGoal || "0");
 
@@ -67,11 +65,9 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
     };
   });
 
-  // Function to handle adding money
   const handleAddMoney = () => {
     if (goalReached) return;
 
-    // Prompt the user to enter an amount
     Alert.prompt(
       "Add Money",
       `Enter the amount you'd like to add (Goal: £${groupGoal})`,
@@ -89,7 +85,6 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
               return;
             }
 
-            // Check if adding this amount exceeds the goal
             if (totalBalance + money > groupGoal) {
               Alert.alert(
                 "Amount exceeds goal",
@@ -101,7 +96,6 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
               const newBalance = totalBalance + money;
               setTotalBalance(newBalance);
 
-              // Add Laurence's contribution to the contributions list
               const updatedContributions = [
                 ...contributions,
                 {
@@ -112,7 +106,6 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
               ];
               setContributions(updatedContributions);
 
-              // Check if goal is reached
               if (newBalance >= groupGoal) {
                 setGoalReached(true);
                 Alert.alert(
@@ -130,29 +123,43 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
 
   return (
     <View
-      className="flex justify-center pt-12"
-      style={{ width: SCREEN_WIDTH, backgroundColor: item.backgroundColor }}
+      className="flex justify-center"
+      style={{
+        width: SCREEN_WIDTH,
+        backgroundColor: "#44bca3",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+      }}
     >
-      <ScrollView>
-        <View className="absolute inset-0 items-center">
-          <Animated.View
-            style={[
-              {
-                width: SCREEN_WIDTH,
-                height: SCREEN_WIDTH,
-                backgroundColor: item.backgroundColor,
-                borderRadius: SCREEN_WIDTH / 2,
-              },
-              circleAnimation,
-            ]}
-          />
-        </View>
-
-        <Card>
-          {/* Display the updated group size from eventData */}
+      <ScrollView
+        contentContainerStyle={{
+          paddingVertical: 10,
+          paddingHorizontal: 15,
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            width: SCREEN_WIDTH - 30,
+            backgroundColor: "#FFFFFF",
+            borderRadius: 20,
+            padding: 20,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.15,
+            shadowRadius: 20,
+            elevation: 10,
+            marginBottom: 20,
+          }}
+        >
           <Text
-            className="text-right font-bold pt-2 mx-5 text-base"
-            style={{ color: item.textColor }}
+            style={{
+              textAlign: "right",
+              fontWeight: "600",
+              color: "#1F2937",
+              fontSize: 14,
+              marginBottom: 10,
+            }}
           >
             {eventData?.groupSize
               ? `${eventData.groupSize} People`
@@ -165,24 +172,31 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
           >
             <LottieView
               source={item.animation}
-              style={{ width: SCREEN_WIDTH * 0.5, height: SCREEN_WIDTH * 0.5 }}
+              style={{ width: SCREEN_WIDTH * 0.4, height: SCREEN_WIDTH * 0.4 }}
               autoPlay
               loop
             />
           </Animated.View>
 
-          {/* Display the updated group event title */}
           <Text
-            className="text-left font-bold pt-8 mx-5 text-lg"
-            style={{ color: item.textColor }}
+            style={{
+              color: "#111827",
+              fontWeight: "700",
+              fontSize: 22,
+              textAlign: "left",
+              marginVertical: 10,
+            }}
           >
             {eventData?.groupEvent || item.title}
           </Text>
 
-          {/* Update description with goal and goal date */}
           <Text
-            className="text-left font-light pt-2 mx-5 text-base"
-            style={{ color: item.textColor }}
+            style={{
+              color: "#4B5563",
+              fontWeight: "400",
+              fontSize: 14,
+              textAlign: "left",
+            }}
           >
             {eventData
               ? `Reach your goal of £${eventData.savingsGoal} by ${new Date(
@@ -191,42 +205,94 @@ const RenderItem = ({ item, index, x, eventData }: Props) => {
               : item.description}
           </Text>
 
-          {/* Dynamically updated event balance */}
           <Text
-            className="text-left font-bold pt-6 mx-5 text-xl"
-            style={{ color: item.textColor }}
+            style={{
+              color: "#1F2937",
+              fontWeight: "600",
+              fontSize: 16,
+              textAlign: "left",
+              marginTop: 20,
+            }}
           >
             Total event balance:
           </Text>
 
           <Text
-            className="text-left text-7xl font-thin mb-2.5 pt-4 mx-5"
-            style={{ color: item.textColor }}
+            style={{
+              color: "#111827",
+              fontWeight: "300",
+              fontSize: 48,
+              letterSpacing: 1,
+              textAlign: "center",
+              marginVertical: 15,
+            }}
           >
-            £{totalBalance.toFixed(2)}{" "}
-            {/* Display the balance with 2 decimal places */}
+            £{totalBalance.toFixed(2)}
           </Text>
 
-          {/* Disable button if goal is reached */}
+          <Progress.Bar
+            progress={totalBalance / groupGoal}
+            width={SCREEN_WIDTH - 80}
+            height={12}
+            color="#3B82F6"
+            unfilledColor="#E5E7EB"
+            borderRadius={6}
+            style={{ marginBottom: 15, alignSelf: "center" }}
+          />
+
           <CustomButton
             title={goalReached ? "Goal Reached" : "Add money"}
             onPress={handleAddMoney}
-            disabled={goalReached} // Disable button when goal is reached
+            disabled={goalReached}
+            style={{
+              backgroundColor: goalReached ? "#906ef7" : "#3B82F6",
+              borderRadius: 25,
+              paddingVertical: 15,
+              paddingHorizontal: 30,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 3 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 5,
+              marginTop: 10,
+              alignSelf: "center",
+              width: SCREEN_WIDTH - 80,
+              textAlign: "center",
+            }}
           />
-        </Card>
+        </View>
 
-        <Card>
-          {/* Render the updated list of contributors, including Laurence */}
+        <View
+          style={{
+            width: SCREEN_WIDTH - 30,
+            backgroundColor: "#FFFFFF",
+            borderRadius: 20,
+            padding: 20,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 5 },
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5,
+          }}
+        >
           {contributions.map((contribution) => (
             <View
               key={contribution.id}
-              className="flex-row justify-between mb-4"
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 15,
+              }}
             >
-              <Text className="text-gray-600">{contribution.name}</Text>
-              <Text className="text-gray-600">{contribution.moneyIn}</Text>
+              <Text style={{ fontWeight: "600", color: "#374151" }}>
+                {contribution.name}
+              </Text>
+              <Text style={{ fontWeight: "600", color: "#374151" }}>
+                {contribution.moneyIn}
+              </Text>
             </View>
           ))}
-        </Card>
+        </View>
       </ScrollView>
     </View>
   );

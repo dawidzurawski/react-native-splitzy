@@ -8,18 +8,17 @@ import RenderItem from "@/components/RenderItem";
 import data, { OnboardingData } from "@/data/data";
 import { FlatList, View, ViewToken, Image } from "react-native";
 import Pagination from "@/components/Pagination";
-import { useRoute } from "@react-navigation/native"; // Import to get route params
+import { useRoute } from "@react-navigation/native";
 
 const Home = () => {
   const flatlistRef = useAnimatedRef<FlatList<OnboardingData>>();
   const x = useSharedValue(0);
   const flatlistIndex = useSharedValue(0);
 
-  const splitzyLogo = require("../assets/splitzy-logo.png"); // Adjust path to your logo
+  const splitzyLogo = require("../assets/splitzy-logo.png");
 
-  // Retrieve eventData from route params
   const route = useRoute();
-  const { eventData } = route.params || {}; // Get the passed eventData from navigation
+  const { eventData } = route.params || {};
 
   const onViewableItemsChanged = ({
     viewableItems,
@@ -48,7 +47,6 @@ const Home = () => {
         onScroll={onScroll}
         data={data}
         renderItem={({ item, index }) => {
-          // Pass the eventData to RenderItem
           return (
             <RenderItem item={item} index={index} x={x} eventData={eventData} />
           );
